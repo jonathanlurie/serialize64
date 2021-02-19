@@ -4,7 +4,7 @@
 </head>
 <body>
   <!-- importing the automatically build module -->
-  <script src="../dist/es6module.umd.js"></script>
+  <script src="../dist/objectools.umd.js"></script>
 
   <!-- The minified version is also accessible -->
   <!-- <script src="../dist/es6module.umd.min.js"></script> -->
@@ -13,14 +13,41 @@
 
   <script>
 
-    // the foo object is part of our es6module module
-    var foo = new es6module.Foo(20, 30);
+    console.log('objectools: ', objectools)
 
-    // do something with foo
-    foo.printAnAttribute();
-    foo.setAnAttribute(34)
-    foo.printAnAttribute();
-    foo.testWorker();
+    const someData = new Uint8Array([1, 2, 3, 4, 5, 6, 99])
+    const someStrData = objectools.BinaryCodec.encode(someData)
+    console.log('someData: ', someData)
+    console.log('someStrData: ', someStrData)
+    const decoded = objectools.BinaryCodec.decode(someStrData)
+    console.log('decoded: ', decoded)
+
+
+    const size = 1000
+    const someData2 = new Float32Array(size)
+    for (let i = 0; i < size; i += 1) {
+      someData2[i] = Math.random()
+    }
+    console.time('encoding')
+    const someStrData2 = objectools.BinaryCodec.encode(someData2)
+    console.timeEnd('encoding')
+    // console.log('someData2: ', someData2)
+    // console.log('someStrData2: ', someStrData2)
+    console.time('decoding')
+    const decoded2 = objectools.BinaryCodec.decode(someStrData2)
+    console.timeEnd('decoding')
+    // console.log('decoded2: ', decoded2)
+
+    let sqErr = 0
+    for (let i = 0; i < size; i += 1) {
+      sqErr += (someData2[i] - decoded2[i]) ** 2
+    }
+    const mse = sqErr / size
+    console.log('mse: ', mse);
+    console.log('original byte size: ', someData2.byteLength)
+    console.log('encoded byte size: ', someStrData2.length);
+    console.log('growth ratio: ', someStrData2.length / someData2.byteLength);
+
   </script>
 
 </body>

@@ -1,5 +1,1 @@
-import Foo from './Foo'
-
-export default ({
-  Foo,
-})
+export { default as BinaryCodec } from "./BinaryCodec"

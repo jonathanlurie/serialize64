@@ -3,7 +3,6 @@ import resolve from '@rollup/plugin-node-resolve'
 import builtins from 'rollup-plugin-node-builtins'
 import globals from 'rollup-plugin-node-globals'
 import commonjs from '@rollup/plugin-commonjs'
-import webworkify from 'rollup-plugin-webworkify'
 import pkg from './package.json'
 
 // deals with package names like '@user/package'
@@ -28,7 +27,6 @@ const configurations = [
       commonjs({ include: 'node_modules/**' }),
       globals(),
       builtins(),
-      webworkify({ pattern: '**/*.worker.js' }),
     ],
   },
 
@@ -49,7 +47,6 @@ const configurations = [
       commonjs({ include: 'node_modules/**' }),
       globals(),
       builtins(),
-      webworkify({ pattern: '**/*.worker.js' }),
     ],
   },
 
@@ -72,7 +69,6 @@ const configurations = [
       commonjs({ include: 'node_modules/**' }),
       globals(),
       builtins(),
-      // webworkify({ pattern: '**/*.worker.js' }),
     ],
   },
 
@@ -95,7 +91,6 @@ if (process.env.NODE_ENV === 'production') {
         commonjs({ include: 'node_modules/**' }),
         globals(),
         builtins(),
-        webworkify({ pattern: '**/*.worker.js' }),
         terser()],
     })
 }
