@@ -1,7 +1,7 @@
 import { Base64 } from 'js-base64'
 
 const constants = {
-  PREFIX: '_#OT#_',
+  PREFIX: '_S64_',
   SEPARATOR: ':',
 }
 
@@ -40,7 +40,7 @@ let FLAG_TO_TYPE = {
 constants.PREFIX_LENGTH = constants.PREFIX.length + constants.SEPARATOR.length + Object.values(TYPE_TO_FLAG)[0].length
 
 
-export default class BinaryCodec {
+export default class Codec {
   /**
    * Encode from a typed array to base64 prepended with a markup
    * @param {*} data 
@@ -63,16 +63,20 @@ export default class BinaryCodec {
     return encoded
   }
 
-  static decode(str) {
-    if (!str.startsWith(constants.PREFIX)) {
-      return str
+  static decode(data) {
+    if (typeof data !== 'string') {
+      return data
     }
 
-    const prefix = str.slice(0, constants.PREFIX_LENGTH) 
-    const b64 = str.slice(constants.PREFIX_LENGTH)
+    if (!data.startsWith(constants.PREFIX)) {
+      return data
+    }
+
+    const prefix = data.slice(0, constants.PREFIX_LENGTH) 
+    const b64 = data.slice(constants.PREFIX_LENGTH)
     const bytes = Base64.toUint8Array(b64)
     const binaryConstructor = FLAG_TO_TYPE[prefix.slice(constants.PREFIX.length, prefix.length - 1 )]
-    const data = new binaryConstructor(bytes.buffer)
-    return data
+    const decodedData = new binaryConstructor(bytes.buffer)
+    return decodedData
   }
 }

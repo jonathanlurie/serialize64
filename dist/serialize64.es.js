@@ -1,11 +1,7 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var jsBase64 = require('js-base64');
+import { Base64 } from 'js-base64';
 
 const constants = {
-  PREFIX: '_#OT#_',
+  PREFIX: '_S64_',
   SEPARATOR: ':',
 };
 
@@ -44,7 +40,7 @@ let FLAG_TO_TYPE = {
 constants.PREFIX_LENGTH = constants.PREFIX.length + constants.SEPARATOR.length + Object.values(TYPE_TO_FLAG)[0].length;
 
 
-class BinaryCodec {
+class Codec {
   /**
    * Encode from a typed array to base64 prepended with a markup
    * @param {*} data 
@@ -62,24 +58,59 @@ class BinaryCodec {
       byteArray = new Uint8Array(data.buffer);
     }
 
-    const b64 = jsBase64.Base64.fromUint8Array(byteArray);
+    const b64 = Base64.fromUint8Array(byteArray);
     const encoded = `${constants.PREFIX}${TYPE_TO_FLAG[data.constructor.name]}${constants.SEPARATOR}${b64}`;
     return encoded
   }
 
-  static decode(str) {
-    if (!str.startsWith(constants.PREFIX)) {
-      return str
+  static decode(data) {
+    if (typeof data !== 'string') {
+      return data
     }
 
-    const prefix = str.slice(0, constants.PREFIX_LENGTH); 
-    const b64 = str.slice(constants.PREFIX_LENGTH);
-    const bytes = jsBase64.Base64.toUint8Array(b64);
+    if (!data.startsWith(constants.PREFIX)) {
+      return data
+    }
+
+    const prefix = data.slice(0, constants.PREFIX_LENGTH); 
+    const b64 = data.slice(constants.PREFIX_LENGTH);
+    const bytes = Base64.toUint8Array(b64);
     const binaryConstructor = FLAG_TO_TYPE[prefix.slice(constants.PREFIX.length, prefix.length - 1 )];
-    const data = new binaryConstructor(bytes.buffer);
-    return data
+    const decodedData = new binaryConstructor(bytes.buffer);
+    return decodedData
   }
 }
 
-exports.BinaryCodec = BinaryCodec;
-//# sourceMappingURL=objectools.cjs.js.map
+class JSON64 {
+  static parse(text, reviver) {
+
+    const reviver64 = (key, value) => {
+      let decodedValue = Codec.decode(value);
+      if (typeof reviver === 'function') {
+        decodedValue = reviver(key, decodedValue);
+      }
+      return decodedValue
+    };
+
+    return JSON.parse(text, reviver64)
+  }
+
+
+  static stringify(value, replacer = null, space = null) {
+
+    const replacer64 = (key2, value2) => {
+      let replacedValue = value2;
+      if (typeof replacer === 'function') {
+        replacedValue = replacer(key2, value2);
+      }
+      return Codec.encode(replacedValue)
+    };
+
+    return JSON.stringify(value, replacer64, space)
+  }
+
+
+}
+
+export { Codec, JSON64 };
+//# sourceMappingURL=serialize64.es.js.map

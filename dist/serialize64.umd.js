@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.objectools = {}));
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.serialize64 = {}));
 }(this, (function (exports) { 'use strict';
 
   /**
@@ -280,7 +280,7 @@
   };
 
   const constants = {
-    PREFIX: '_#OT#_',
+    PREFIX: '_S64_',
     SEPARATOR: ':',
   };
 
@@ -319,7 +319,7 @@
   constants.PREFIX_LENGTH = constants.PREFIX.length + constants.SEPARATOR.length + Object.values(TYPE_TO_FLAG)[0].length;
 
 
-  class BinaryCodec {
+  class Codec {
     /**
      * Encode from a typed array to base64 prepended with a markup
      * @param {*} data 
@@ -342,23 +342,59 @@
       return encoded
     }
 
-    static decode(str) {
-      if (!str.startsWith(constants.PREFIX)) {
-        return str
+    static decode(data) {
+      if (typeof data !== 'string') {
+        return data
       }
 
-      const prefix = str.slice(0, constants.PREFIX_LENGTH); 
-      const b64 = str.slice(constants.PREFIX_LENGTH);
+      if (!data.startsWith(constants.PREFIX)) {
+        return data
+      }
+
+      const prefix = data.slice(0, constants.PREFIX_LENGTH); 
+      const b64 = data.slice(constants.PREFIX_LENGTH);
       const bytes = gBase64.toUint8Array(b64);
       const binaryConstructor = FLAG_TO_TYPE[prefix.slice(constants.PREFIX.length, prefix.length - 1 )];
-      const data = new binaryConstructor(bytes.buffer);
-      return data
+      const decodedData = new binaryConstructor(bytes.buffer);
+      return decodedData
     }
   }
 
-  exports.BinaryCodec = BinaryCodec;
+  class JSON64 {
+    static parse(text, reviver) {
+
+      const reviver64 = (key, value) => {
+        let decodedValue = Codec.decode(value);
+        if (typeof reviver === 'function') {
+          decodedValue = reviver(key, decodedValue);
+        }
+        return decodedValue
+      };
+
+      return JSON.parse(text, reviver64)
+    }
+
+
+    static stringify(value, replacer = null, space = null) {
+
+      const replacer64 = (key2, value2) => {
+        let replacedValue = value2;
+        if (typeof replacer === 'function') {
+          replacedValue = replacer(key2, value2);
+        }
+        return Codec.encode(replacedValue)
+      };
+
+      return JSON.stringify(value, replacer64, space)
+    }
+
+
+  }
+
+  exports.Codec = Codec;
+  exports.JSON64 = JSON64;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=objectools.umd.js.map
+//# sourceMappingURL=serialize64.umd.js.map

@@ -4,7 +4,7 @@
 </head>
 <body>
   <!-- importing the automatically build module -->
-  <script src="../dist/objectools.umd.js"></script>
+  <script src="../dist/serialize64.umd.js"></script>
 
   <!-- The minified version is also accessible -->
   <!-- <script src="../dist/es6module.umd.min.js"></script> -->
@@ -13,13 +13,13 @@
 
   <script>
 
-    console.log('objectools: ', objectools)
+    console.log('serialize64: ', serialize64)
 
     const someData = new Uint8Array([1, 2, 3, 4, 5, 6, 99])
-    const someStrData = objectools.BinaryCodec.encode(someData)
+    const someStrData = serialize64.Codec.encode(someData)
     console.log('someData: ', someData)
     console.log('someStrData: ', someStrData)
-    const decoded = objectools.BinaryCodec.decode(someStrData)
+    const decoded = serialize64.Codec.decode(someStrData)
     console.log('decoded: ', decoded)
 
 
@@ -29,12 +29,12 @@
       someData2[i] = Math.random()
     }
     console.time('encoding')
-    const someStrData2 = objectools.BinaryCodec.encode(someData2)
+    const someStrData2 = serialize64.Codec.encode(someData2)
     console.timeEnd('encoding')
     // console.log('someData2: ', someData2)
     // console.log('someStrData2: ', someStrData2)
     console.time('decoding')
-    const decoded2 = objectools.BinaryCodec.decode(someStrData2)
+    const decoded2 = serialize64.Codec.decode(someStrData2)
     console.timeEnd('decoding')
     // console.log('decoded2: ', decoded2)
 

@@ -1,11 +1,11 @@
 {
-  "name": "objectools",
-  "version": "0.1.0",
-  "description": "a set of tools dedicated for JS object manipulation, flattening, serializing, etc. Nothing crazy, just convenient.",
-  "repository": "jonathanlurie/objectools",
-  "main": "dist/objectools.cjs.js",
-  "module": "dist/objectools.es.js",
-  "browser": "dist/objectools.umd.js",
+  "name": "serialize64",
+  "version": "1.0.0",
+  "description": "Typed Arrays serialization that just works and the JSON codec that goes with it. Node and browsers.",
+  "repository": "jonathanlurie/serialize64",
+  "main": "dist/serialize64.cjs.js",
+  "module": "dist/serialize64.es.js",
+  "browser": "dist/serialize64.umd.js",
   "entry": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
